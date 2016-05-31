@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Setting for operator panel -->
+<operator>
+  <!-- Operator Panel window settings -->
+  <screen>
+    <width> 640 </width>
+    <height> 480 </height>
+  </screen>
+
+  <!-- Objects - devices being displayed on screen -->
+  <objects>
+    <object
+      id="Switch1"
+      width="100"
+      height="100"
+      posx="100"
+      posy="100"
+      interface="IServer1" />
+
+    <object
+      id="Server1"
+      width="100"
+      height="100"
+      posx="100"
+      posy="100"
+      interface="IServer1" />
+
+    <object
+      id="Server2"
+      width="100"
+      height="100"
+      posx="100"
+      posy="100"
+      interface="IServer1" />
+
+    <object
+      id="Server3"
+      width="100"
+      height="100"
+      posx="550"
+      posy="100"
+      interface="IServer2" />
+  </objects>
+
+  <!-- Edges connecting objects -->
+  <edges>
+    <edge>
+      <!-- Objects connected by edge -->
+      <connecting
+        pointA="Switch1"
+        pointB="Server3" />
+
+      <!-- Lines drawing edge -->
+      <line
+        beginx="100"
+        beginy="100"
+        endx="550"
+        endy="100" />
+
+      <!-- TODO styles -->
+    </edge>
+  </edges>
+</operator>

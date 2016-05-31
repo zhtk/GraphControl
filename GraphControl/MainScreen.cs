@@ -12,11 +12,13 @@ namespace GraphControl
 {
     public partial class MainScreen : Form
     {
+        ConfigLoader loader;
 
         public MainScreen()
         {
             InitializeComponent();
 
+            loader = new ConfigLoader();
             SuspendLayout();
             // TODO
             ResumeLayout();
