@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace GraphControl
 {
-    class ConfigLoader : IDisposable
+    public class ConfigLoader : IDisposable
     {
         private XDocument document;
         private Dictionary<String, DeviceObject> objects = new Dictionary<String, DeviceObject>();
@@ -92,7 +92,6 @@ namespace GraphControl
             EdgeObject edgeObject = new EdgeObject(pointA, pointB);
 
             foreach (var line in edge.Elements("line")) {
-                Console.WriteLine("Testing...");
                 Point begin = new Point(int.Parse(line.Attribute("beginx").Value),
                                         int.Parse(line.Attribute("beginy").Value));
                 Point end = new Point(int.Parse(line.Attribute("endx").Value),

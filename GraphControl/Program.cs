@@ -16,7 +16,23 @@ namespace GraphControl
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainScreen());
+
+            ConfigLoader loader;
+            try
+            {
+                loader = new ConfigLoader();
+            }
+            catch (Exception e) {
+                MessageBox.Show("XML configuration is invalid!", 
+                                "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            MainScreen screen = new MainScreen(loader.DeviceObjects, loader.EdgeLines);
+            screen.Width = loader.ScreenWidth;
+            screen.Height = loader.ScreenHeight;
+
+            Application.Run(screen);
         }
     }
 }

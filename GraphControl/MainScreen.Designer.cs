@@ -36,7 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 442);
             this.Name = "MainScreen";
-            this.Text = "Form1";
+            this.Text = "GraphControl";
             this.ResumeLayout(false);
 
         }

@@ -12,21 +12,18 @@ namespace GraphControl
 {
     public partial class MainScreen : Form
     {
-        DeviceObject[] deviceObjects;
-        List<GraphLine> lines;
+        private DeviceObject[] deviceObjects;
+        private List<GraphLine> lines;
 
-        public MainScreen()
+        public MainScreen(DeviceObject[] deviceObjects, List<GraphLine> lines)
         {
             InitializeComponent();
 
-            using (ConfigLoader loader = new ConfigLoader())
-            {
-                deviceObjects = loader.DeviceObjects;
-                lines = loader.EdgeLines;
-            }
+            this.deviceObjects = deviceObjects;
+            this.lines = lines;
 
             SuspendLayout();
-            // TODO
+            this.MouseClick += new MouseEventHandler(this.ShowContextMenu);
             ResumeLayout();
         }
 
@@ -34,42 +31,34 @@ namespace GraphControl
         {
             base.OnPaint(e);
 
-            // Repaint devices on screen
-            foreach (DeviceObject device in deviceObjects)
-                e.Graphics.DrawImage(device.Image, device.Position);
-
             // Draw edges
             foreach (GraphLine line in lines)
                 e.Graphics.DrawLine(line.Pen, line.Begin, line.End);
+
+            // Repaint devices on screen
+            foreach (DeviceObject device in deviceObjects)
+                e.Graphics.DrawImage(device.Image, device.Position);
         }
 
         private void ShowContextMenu(object sender, MouseEventArgs e)
         {
-            bool match = false;
-            /*
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                foreach (ListViewItem item in listView1.Items)
+                foreach (DeviceObject item in deviceObjects)
                 {
-                    //Microsoft.Msagl.Node.BoundingBox.Contains
-                    if (item.Bounds.Contains(new Point(e.X, e.Y)))
+                    Point click = new Point(e.X, e.Y);
+                    Rectangle itemRect = new Rectangle(item.Position, item.Size);
+
+                    if (itemRect.Contains(click))
                     {
-                        MenuItem[] mi = new MenuItem[] { new MenuItem("Hello"), new MenuItem("World"), new MenuItem(item.Name) };
-                        listView1.ContextMenu = new ContextMenu(mi);
-                        match = true;
+                        this.ContextMenu = new ContextMenu(item.Menu);
+                        this.ContextMenu.Show(this, click);
                         break;
                     }
                 }
-                if (match)
-                {
-                    listView1.ContextMenu.Show(listView1, new Point(e.X, e.Y));
-                }
-                else
-                {
-                    //Show listViews context menu
-                }
 
-            }*/
+                this.ContextMenu = null;
+            }
         }
     }
 }
