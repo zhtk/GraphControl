@@ -12,16 +12,35 @@ namespace GraphControl
 {
     public partial class MainScreen : Form
     {
-        ConfigLoader loader;
+        DeviceObject[] deviceObjects;
+        List<GraphLine> lines;
 
         public MainScreen()
         {
             InitializeComponent();
 
-            loader = new ConfigLoader();
+            using (ConfigLoader loader = new ConfigLoader())
+            {
+                deviceObjects = loader.DeviceObjects;
+                lines = loader.EdgeLines;
+            }
+
             SuspendLayout();
             // TODO
             ResumeLayout();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            // Repaint devices on screen
+            foreach (DeviceObject device in deviceObjects)
+                e.Graphics.DrawImage(device.Image, device.Position);
+
+            // Draw edges
+            foreach (GraphLine line in lines)
+                e.Graphics.DrawLine(line.Pen, line.Begin, line.End);
         }
 
         private void ShowContextMenu(object sender, MouseEventArgs e)

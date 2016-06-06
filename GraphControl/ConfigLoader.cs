@@ -8,11 +8,13 @@ using System.Drawing;
 
 namespace GraphControl
 {
-    class ConfigLoader
+    class ConfigLoader : IDisposable
     {
-        XDocument document;
-        Dictionary<String, DeviceObject> objects = new Dictionary<String, DeviceObject>();
-        private int width, height;
+        private XDocument document;
+        private Dictionary<String, DeviceObject> objects = new Dictionary<String, DeviceObject>();
+        private List<GraphLine> lines = new List<GraphLine>();
+        public int ScreenWidth { get; private set; }
+        public int ScreenHeight { get; private set; }
         
         public ConfigLoader(String file = "Operator.xml")
         {
@@ -22,19 +24,25 @@ namespace GraphControl
             LinkObjects();
         }
 
-        public int Width 
-        {
-            get 
-            {
-                return width;
-            }
-        }
-
-        public int Height
+        /// <summary>
+        /// Gets array of device objects
+        /// </summary>
+        public DeviceObject[] DeviceObjects
         {
             get
             {
-                return height;
+                return objects.Select(item => item.Value).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Gets lines that make edges
+        /// </summary>
+        public List<GraphLine> EdgeLines
+        {
+            get
+            {
+                return lines;
             }
         }
 
@@ -46,9 +54,9 @@ namespace GraphControl
             var settings = document.Element("operator").Element("screen").Elements();
             foreach (var elem in settings) {
                 if (elem.Name == "width")
-                    width = int.Parse(elem.Value);
+                    ScreenWidth = int.Parse(elem.Value);
                 else if (elem.Name == "height")
-                    height = int.Parse(elem.Value);
+                    ScreenHeight = int.Parse(elem.Value);
             }
         }
 
@@ -73,9 +81,42 @@ namespace GraphControl
             }
         }
 
+        private void ParseEdge(XElement edge)
+        {
+            
+            var points = edge.Element("connecting");
+
+            DeviceObject pointA = objects[points.Attribute("pointA").Value];
+            DeviceObject pointB = objects[points.Attribute("pointB").Value];
+
+            EdgeObject edgeObject = new EdgeObject(pointA, pointB);
+
+            foreach (var line in edge.Elements("line")) {
+                Console.WriteLine("Testing...");
+                Point begin = new Point(int.Parse(line.Attribute("beginx").Value),
+                                        int.Parse(line.Attribute("beginy").Value));
+                Point end = new Point(int.Parse(line.Attribute("endx").Value),
+                                      int.Parse(line.Attribute("endy").Value));
+
+                GraphLine graphLine = new GraphLine(begin, end);
+                lines.Add(graphLine);
+                edgeObject.AddLine(graphLine);
+            }
+
+            pointA.AddEdge(edgeObject);
+            pointB.AddEdge(edgeObject);
+        }
+
         private void LinkObjects()
+        {
+            var edges = document.Element("operator").Element("edges").Elements();
+
+            foreach (var edge in edges)
+                ParseEdge(edge);
+        }
+
+        public void Dispose()
         { 
-            // TODO
         }
     }
 }
