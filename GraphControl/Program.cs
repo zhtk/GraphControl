@@ -23,7 +23,7 @@ namespace GraphControl
                 loader = new ConfigLoader();
             }
             catch (Exception e) {
-                MessageBox.Show("XML configuration is invalid!", 
+                MessageBox.Show("XML configuration is invalid! " + e.Message, 
                                 "Error", MessageBoxButtons.OK);
                 return;
             }

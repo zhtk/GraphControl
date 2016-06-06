@@ -5,9 +5,53 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ServiceModel;
+using Interface;
 
 namespace GraphControl
 {
+    class RemoteDevice : IDevice
+    {
+        private DeviceObject device;
+
+        public RemoteDevice(DeviceObject device)
+        {
+            this.device = device;
+        }
+
+        public void SetImage(Image image)
+        {
+            device.Image = image;
+        }
+
+        public void SetMenuItems(MenuItem[] items)
+        {
+            // TODO poprawka itemów i delegaci
+            device.Menu = items;
+        }
+    }
+
+    public class ServerConnection : DuplexClientBase<IDriver>, IDriver
+    {
+        public ServerConnection(IDevice callbackInstance, String endpoint)
+            : base(callbackInstance, endpoint) {}
+
+        public void Authenticate()
+        {
+            base.Channel.Authenticate();
+        }
+
+        public void Execute(string action)
+        {
+            base.Channel.Execute(action);
+        }
+
+        public void Disconnect()
+        {
+            base.Channel.Disconnect();
+        }
+    }
+
     public class DeviceObject
     {
         public String Id { get; private set; }
@@ -15,9 +59,9 @@ namespace GraphControl
         public Image Image { get; set; }
         public Size Size { get; set; }
         public List<EdgeObject> Edges { get; private set; }
-        public MenuItem[] Menu { get; private set; }
-
-        // TODO Server interface
+        public MenuItem[] Menu { get; set; }
+        private String endpoint;
+        private ServerConnection connection = null;
         
         public DeviceObject(String id, String serverInterface)
         {
@@ -25,15 +69,43 @@ namespace GraphControl
             Position = new Point();
             Size = new Size(0, 0);
             Edges = new List<EdgeObject>();
-            // TODO server interface
+            endpoint = serverInterface;
 
             MakeMenu();
+            ConnectServer(); // TODO Przenieść do tasków
+        }
+
+        private void ConnectServer()
+        {
+            RemoteDevice remote = new RemoteDevice(this);
+
+            try
+            {
+                if (connection != null)
+                    connection.Disconnect();
+
+                connection = new ServerConnection(remote, endpoint);
+                // TODO Handler na wypadek zerwania połączenia
+                connection.Authenticate();
+            }
+            catch (Exception e) 
+            { 
+                
+            }
+        }
+
+        private void ConnectServer(object sender, EventArgs args)
+        {
+            ConnectServer();
         }
 
         private void MakeMenu()
         {
+            MenuItem item = new MenuItem("Connect to server");
+            item.Click += new EventHandler(ConnectServer);
+
             Menu = new MenuItem[] {
-                new MenuItem("Connect to server"), // TODO delegates
+                item,
             };
         }
 

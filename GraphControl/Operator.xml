@@ -15,7 +15,7 @@
       height="100"
       posx="280"
       posy="250"
-      interface="IServer1" />
+      interface="Server1" />
 
     <object
       id="Server1"
@@ -23,7 +23,7 @@
       height="100"
       posx="80"
       posy="250"
-      interface="IServer1" />
+      interface="Server1" />
 
     <object
       id="Server2"
@@ -31,7 +31,7 @@
       height="100"
       posx="480"
       posy="250"
-      interface="IServer1" />
+      interface="Server1" />
 
     <object
       id="Server3"
@@ -39,7 +39,7 @@
       height="100"
       posx="280"
       posy="60"
-      interface="IServer2" />
+      interface="Server2" />
   </objects>
 
   <!-- Edges connecting objects -->
