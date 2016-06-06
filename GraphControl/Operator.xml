@@ -13,32 +13,32 @@
       id="Switch1"
       width="100"
       height="100"
-      posx="100"
-      posy="100"
+      posx="280"
+      posy="250"
       interface="IServer1" />
 
     <object
       id="Server1"
       width="100"
       height="100"
-      posx="100"
-      posy="100"
+      posx="80"
+      posy="250"
       interface="IServer1" />
 
     <object
       id="Server2"
       width="100"
       height="100"
-      posx="100"
-      posy="100"
+      posx="480"
+      posy="250"
       interface="IServer1" />
 
     <object
       id="Server3"
       width="100"
       height="100"
-      posx="550"
-      posy="100"
+      posx="280"
+      posy="60"
       interface="IServer2" />
   </objects>
 
@@ -52,12 +52,36 @@
 
       <!-- Lines drawing edge -->
       <line
-        beginx="100"
-        beginy="100"
-        endx="550"
-        endy="100" />
+        beginx="330"
+        beginy="300"
+        endx="330"
+        endy="110" />
 
       <!-- TODO styles -->
+    </edge>
+
+    <edge>
+      <connecting
+        pointA="Switch1"
+        pointB="Server1" />
+
+      <line
+        beginx="330"
+        beginy="300"
+        endx="130"
+        endy="300" />
+    </edge>
+
+    <edge>
+      <connecting
+        pointA="Switch1"
+        pointB="Server2" />
+
+      <line
+        beginx="330"
+        beginy="300"
+        endx="530"
+        endy="300" />
     </edge>
   </edges>
 </operator>

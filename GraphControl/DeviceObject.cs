@@ -19,7 +19,7 @@ namespace GraphControl
 
         // TODO Server interface
         
-        public DeviceObject(String id, String server)
+        public DeviceObject(String id, String serverInterface)
         {
             Id = id;
             Position = new Point();
@@ -33,7 +33,7 @@ namespace GraphControl
         private void MakeMenu()
         {
             Menu = new MenuItem[] {
-                new MenuItem("Connect to server"),
+                new MenuItem("Connect to server"), // TODO delegates
             };
         }
 
