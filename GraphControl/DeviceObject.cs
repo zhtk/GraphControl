@@ -29,8 +29,36 @@ namespace GraphControl
 
         public void SetMenuItems(String[] items)
         {
-            // TODO poprawka itemów i delegaci
-            //device.Menu = items;
+            if (items.Length == 0) {
+                device.Menu = null;
+                return;
+            }
+
+            MenuItem[] menuItems = new MenuItem[items.Length];
+
+            for (int i = 0; i < items.Length; ++i) {
+                menuItems[i] = new MenuItem();
+                menuItems[i].Text = items[i];
+                menuItems[i].Click += new EventHandler(ActionOccured);
+            }
+            
+            device.Menu = menuItems;
+        }
+
+        private void ActionOccured(object sender, EventArgs args)
+        {
+            try
+            {
+                MenuItem item = (MenuItem) sender;
+                device.Connection.Execute(item.Text);
+            }
+            catch (CommunicationException e)
+            {
+                Console.WriteLine("Cannot execute action: ", e.Message);
+            }
+            catch (Exception e)
+            { 
+            }
         }
     }
 
@@ -64,7 +92,7 @@ namespace GraphControl
         public List<EdgeObject> Edges { get; private set; }
         public MenuItem[] Menu { get; set; }
         private String endpoint;
-        private ServerConnection connection = null;
+        public ServerConnection Connection { get; private set; }
         
         public DeviceObject(String id, String serverInterface)
         {
@@ -73,9 +101,10 @@ namespace GraphControl
             Size = new Size(0, 0);
             Edges = new List<EdgeObject>();
             endpoint = serverInterface;
+            Connection = null;
 
             MakeMenu();
-            ConnectServer(); // TODO Przenieść do tasków
+            Task.Run(() => ConnectServer());
         }
 
         private void ConnectServer()
@@ -84,16 +113,16 @@ namespace GraphControl
 
             try
             {
-                if (connection != null)
-                    connection.Disconnect();
+                if (Connection != null)
+                    Connection.Disconnect();
 
-                connection = new ServerConnection(remote, endpoint);
+                Connection = new ServerConnection(remote, endpoint);
                 // TODO Handler na wypadek zerwania połączenia
-                connection.Authenticate();
+                Connection.Authenticate();
             }
-            catch (Exception e) 
-            { 
-                
+            catch (Exception e)
+            {
+                Console.WriteLine("Error when connecting: {0}", e.Message);
             }
         }
 

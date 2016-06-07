@@ -12,8 +12,12 @@ namespace Driver1
     class Server : Interface.IDriver
     {
         protected ConcurrentDictionary<Interface.IDevice, int> devices = new ConcurrentDictionary<Interface.IDevice, int>();
+        // State of the server
         protected Bitmap image;
         protected int serverTemperature;
+        // Available operations
+        private string operation1 = "Zmniejsz chłodzenie";
+        private string operation2 = "Zwiększ chłodzenie";
 
         public Server()
         {
@@ -64,22 +68,30 @@ namespace Driver1
             foreach (var device in users) {
                 try
                 {
+                    // Set image with state
                     using (MemoryStream ms = new MemoryStream())
                     {
                         stateImage.Save(ms, ImageFormat.Png);
                         device.Key.SetImage(ms.ToArray());
                     }
+
+                    // Set context menu with available operations
+                    device.Key.SetMenuItems(new string[] {operation1, operation2});
                 }
                 catch (CommunicationException e) 
                 {
-                    Console.WriteLine("Błąd podczas pisania do klienta: {0}", e.Message);
+                    Console.WriteLine("Error when writing to client: {0}", e.Message);
                 }
             }
         }
 
         public void Execute(string action)
-        { 
-            // TODO
+        {
+            if (action == operation1 && serverTemperature <= 80)
+                serverTemperature += 10;
+
+            if (action == operation2 && serverTemperature >= 40)
+                serverTemperature -= 10;
 
             BroadcastState();
         }
