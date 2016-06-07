@@ -14,7 +14,6 @@ namespace Driver1
             Console.WriteLine("Driver1 Server");
             Console.Write("Starting WCF listener...");
 
-            // TODO 3 endpointy zamiast 1
             using (ServiceHost host1 = new ServiceHost(serviceInstance1))
             using (ServiceHost host2 = new ServiceHost(serviceInstance2))
             using (ServiceHost host3 = new ServiceHost(serviceInstance3))

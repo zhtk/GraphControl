@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Driver1", "Driver1\Driver1.csproj", "{F0C7FE2F-71AD-4214-83C9-831C7924D67E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Driver2", "Driver2\Driver2.csproj", "{F8E3A08B-DD5F-446C-AC7A-6D23D94B9205}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{F0C7FE2F-71AD-4214-83C9-831C7924D67E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0C7FE2F-71AD-4214-83C9-831C7924D67E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0C7FE2F-71AD-4214-83C9-831C7924D67E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E3A08B-DD5F-446C-AC7A-6D23D94B9205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8E3A08B-DD5F-446C-AC7A-6D23D94B9205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E3A08B-DD5F-446C-AC7A-6D23D94B9205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8E3A08B-DD5F-446C-AC7A-6D23D94B9205}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
