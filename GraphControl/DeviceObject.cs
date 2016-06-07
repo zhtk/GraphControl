@@ -11,26 +11,26 @@ using Interface;
 
 namespace GraphControl
 {
-    class RemoteDevice : IDevice
+    public class RemoteDevice : IDevice
     {
-        private DeviceObject device;
+        public DeviceObject Device { get; private set; }
 
         public RemoteDevice(DeviceObject device)
         {
-            this.device = device;
+            this.Device = device;
         }
 
         public void SetImage(byte[] image)
         {
             MemoryStream stream = new MemoryStream(image);
-            device.Image = new Bitmap(stream);
+            Device.Image = new Bitmap(stream);
             Program.Screen.Invalidate();
         }
 
         public void SetMenuItems(String[] items)
         {
-            if (items.Length == 0) {
-                device.Menu = null;
+            if (items == null || items.Length == 0) {
+                Device.Menu = null;
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace GraphControl
                 menuItems[i].Click += new EventHandler(ActionOccured);
             }
             
-            device.Menu = menuItems;
+            Device.Menu = menuItems;
         }
 
         private void ActionOccured(object sender, EventArgs args)
@@ -50,11 +50,12 @@ namespace GraphControl
             try
             {
                 MenuItem item = (MenuItem) sender;
-                device.Connection.Execute(item.Text);
+                Device.Connection.Execute(item.Text);
             }
             catch (CommunicationException e)
             {
                 Console.WriteLine("Cannot execute action: ", e.Message);
+                Device.DisconnectServer();
             }
             catch (Exception e)
             { 
@@ -64,8 +65,13 @@ namespace GraphControl
 
     public class ServerConnection : DuplexClientBase<IDriver>, IDriver
     {
-        public ServerConnection(IDevice callbackInstance, String endpoint)
-            : base(callbackInstance, endpoint) {}
+        RemoteDevice callback;
+
+        public ServerConnection(RemoteDevice callbackInstance, String endpoint)
+            : base(callbackInstance, endpoint) 
+        {
+            callback = callbackInstance;
+        }
 
         public void Authenticate()
         {
@@ -80,6 +86,7 @@ namespace GraphControl
         public void Disconnect()
         {
             base.Channel.Disconnect();
+            callback.Device.DisconnectServer();
         }
     }
 
@@ -117,13 +124,21 @@ namespace GraphControl
                     Connection.Disconnect();
 
                 Connection = new ServerConnection(remote, endpoint);
-                // TODO Handler na wypadek zerwania połączenia
                 Connection.Authenticate();
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error when connecting: {0}", e.Message);
+                Connection = null;
             }
+        }
+
+        public void DisconnectServer()
+        {
+            Console.WriteLine("Disconnected from server");
+            MakeMenu();
+            Image = Image.FromFile(@"img/error.bmp");
+            Program.Screen.Invalidate();
         }
 
         private void ConnectServer(object sender, EventArgs args)
