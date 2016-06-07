@@ -24,6 +24,7 @@ namespace GraphControl
         {
             MemoryStream stream = new MemoryStream(image);
             device.Image = new Bitmap(stream);
+            Program.Screen.Invalidate();
         }
 
         public void SetMenuItems(String[] items)

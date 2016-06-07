@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.ServiceModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -16,7 +17,7 @@ namespace Driver1
 
         public Server()
         {
-            image = new Bitmap("data/server.png");
+            image = new Bitmap(@"data/server.png");
             serverTemperature = 50;
         }
 
@@ -40,8 +41,24 @@ namespace Driver1
             BroadcastState();
         }
 
+        protected Bitmap PrepareImage()
+        {
+            Bitmap img = new Bitmap(image);
+            RectangleF rectf = new RectangleF(10, 70, 80, 30);
+            Graphics g = Graphics.FromImage(img);
+            
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.DrawString(serverTemperature + " st. C", new Font("Tahoma", 14), Brushes.Red, rectf);
+
+            g.Flush();
+            return img;
+        }
+
         protected void BroadcastState()
         {
+            Bitmap stateImage = PrepareImage();
             var users = devices.ToArray();
 
             foreach (var device in users) {
@@ -49,7 +66,7 @@ namespace Driver1
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        image.Save(ms, ImageFormat.Png);
+                        stateImage.Save(ms, ImageFormat.Png);
                         device.Key.SetImage(ms.ToArray());
                     }
                 }

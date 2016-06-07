@@ -8,6 +8,8 @@ namespace GraphControl
 {
     static class Program
     {
+        public static MainScreen Screen {get; private set; }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -28,11 +30,11 @@ namespace GraphControl
                 return;
             }
 
-            MainScreen screen = new MainScreen(loader.DeviceObjects, loader.EdgeLines);
-            screen.Width = loader.ScreenWidth;
-            screen.Height = loader.ScreenHeight;
+            Screen = new MainScreen(loader.DeviceObjects, loader.EdgeLines);
+            Screen.Width = loader.ScreenWidth;
+            Screen.Height = loader.ScreenHeight;
 
-            Application.Run(screen);
+            Application.Run(Screen);
         }
     }
 }

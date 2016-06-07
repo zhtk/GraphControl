@@ -66,7 +66,7 @@ namespace GraphControl
         private void CreateObjects()
         {
             var objects = document.Element("operator").Element("objects").Elements();
-            Image img = new Bitmap("img/error.bmp");
+            Image img = new Bitmap(@"img/error.bmp");
 
             foreach (var elem in objects) {
                 DeviceObject obj = new DeviceObject(elem.Attribute("id").Value, 
