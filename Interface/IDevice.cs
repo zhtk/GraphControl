@@ -8,9 +8,9 @@ namespace Interface
     public interface IDevice
     {
         [OperationContract(IsOneWay = true)]
-        void SetImage(Image image);
+        void SetImage(byte[] image);
 
         [OperationContract(IsOneWay = true)]
-        void SetMenuItems(MenuItem[] items);
+        void SetMenuItems(String[] items);
     }
 }

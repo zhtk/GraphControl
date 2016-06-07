@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ServiceModel;
+using System.IO;
 using Interface;
 
 namespace GraphControl
@@ -19,15 +20,16 @@ namespace GraphControl
             this.device = device;
         }
 
-        public void SetImage(Image image)
+        public void SetImage(byte[] image)
         {
-            device.Image = image;
+            MemoryStream stream = new MemoryStream(image);
+            device.Image = new Bitmap(stream);
         }
 
-        public void SetMenuItems(MenuItem[] items)
+        public void SetMenuItems(String[] items)
         {
             // TODO poprawka itemów i delegaci
-            device.Menu = items;
+            //device.Menu = items;
         }
     }
 

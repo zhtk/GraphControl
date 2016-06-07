@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.ServiceModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace Driver1
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class Server : Interface.IDriver
     {
-        public ConcurrentDictionary<Interface.IDevice, int> devices = new ConcurrentDictionary<Interface.IDevice, int>();
+        protected ConcurrentDictionary<Interface.IDevice, int> devices = new ConcurrentDictionary<Interface.IDevice, int>();
+        protected Bitmap image;
+        protected int serverTemperature;
+
+        public Server()
+        {
+            image = new Bitmap("data/server.png");
+            serverTemperature = 50;
+        }
 
         public void Authenticate()
         {
@@ -29,9 +40,24 @@ namespace Driver1
             BroadcastState();
         }
 
-        public void BroadcastState()
+        protected void BroadcastState()
         {
-            // TODO
+            var users = devices.ToArray();
+
+            foreach (var device in users) {
+                try
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        image.Save(ms, ImageFormat.Png);
+                        device.Key.SetImage(ms.ToArray());
+                    }
+                }
+                catch (CommunicationException e) 
+                {
+                    Console.WriteLine("Błąd podczas pisania do klienta: {0}", e.Message);
+                }
+            }
         }
 
         public void Execute(string action)
