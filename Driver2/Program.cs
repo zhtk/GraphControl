@@ -5,8 +5,14 @@ namespace Driver2
 {
     class Program
     {
+        /// <summary>
+        /// Obiekt reprezentujący WCFowy endpoint - server
+        /// </summary>
         static Server serviceInstance = new Server();
 
+        /// <summary>
+        /// Główna funkcja (udawanego) sterownika monitorującego serwer, który ciągle się psuje
+        /// </summary>
         static void Main()
         {
             Console.WriteLine("Driver1 Server");

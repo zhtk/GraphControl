@@ -11,6 +11,9 @@ using Interface;
 
 namespace GraphControl
 {
+    /// <summary>
+    /// Klasa odbierająca callbacki od serwera i wykonująca w związku z tym jakąś akcję
+    /// </summary>
     public class RemoteDevice : IDevice
     {
         public DeviceObject Device { get; private set; }
@@ -20,6 +23,10 @@ namespace GraphControl
             this.Device = device;
         }
 
+        /// <summary>
+        /// Ustawia zdjęcie obrazujące stan urządzenia
+        /// </summary>
+        /// <param name="image"></param>
         public void SetImage(byte[] image)
         {
             MemoryStream stream = new MemoryStream(image);
@@ -27,6 +34,10 @@ namespace GraphControl
             Program.Screen.Invalidate();
         }
 
+        /// <summary>
+        /// Ustawia możliwe do wykonania na obiekcie akcje
+        /// </summary>
+        /// <param name="items"></param>
         public void SetMenuItems(String[] items)
         {
             if (items == null || items.Length == 0) {
@@ -45,6 +56,11 @@ namespace GraphControl
             Device.Menu = menuItems;
         }
 
+        /// <summary>
+        /// Wysyła do sterownika żądanie podjęcia jakiejś akcji
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void ActionOccured(object sender, EventArgs args)
         {
             try
@@ -63,6 +79,9 @@ namespace GraphControl
         }
     }
 
+    /// <summary>
+    /// Nakładka na interfejs IDriver
+    /// </summary>
     public class ServerConnection : DuplexClientBase<IDriver>, IDriver
     {
         RemoteDevice callback;
@@ -73,16 +92,26 @@ namespace GraphControl
             callback = callbackInstance;
         }
 
+        /// <summary>
+        /// Podłączenie się do sterownika i wpisanie na jego listę subskrynentów
+        /// </summary>
         public void Authenticate()
         {
             base.Channel.Authenticate();
         }
 
+        /// <summary>
+        /// Wydaje sterownikowi rozkaz wykonania pewnej akcji
+        /// </summary>
+        /// <param name="action"> Napis, który pojawił się na menu kontekstowym </param>
         public void Execute(string action)
         {
             base.Channel.Execute(action);
         }
 
+        /// <summary>
+        /// Rozłącza z sterownikiem
+        /// </summary>
         public void Disconnect()
         {
             base.Channel.Disconnect();
@@ -90,15 +119,42 @@ namespace GraphControl
         }
     }
 
+    /// <summary>
+    /// Reprezentuje jedno urządzenie wyświetlane na ekranie
+    /// </summary>
     public class DeviceObject
     {
+        /// <summary>
+        /// Identyfikator urządzenia
+        /// </summary>
         public String Id { get; private set; }
+        /// <summary>
+        /// Pozycja obrazka urządzenia na ekranie
+        /// </summary>
         public Point Position { get; set; }
+        /// <summary>
+        /// Obrazek wyświetlany na ekranie
+        /// </summary>
         public Image Image { get; set; }
+        /// <summary>
+        /// Rozmiar obiektu na ekranie
+        /// </summary>
         public Size Size { get; set; }
+        /// <summary>
+        /// Krawędzie wychodzące z obiektu
+        /// </summary>
         public List<EdgeObject> Edges { get; private set; }
+        /// <summary>
+        /// Menu kontekstowe zawierające listę możliwych do wykonania akcji
+        /// </summary>
         public MenuItem[] Menu { get; set; }
+        /// <summary>
+        /// Nazwa endpointa sterownika w App.config do którego ma się podłączyć obiekt
+        /// </summary>
         private String endpoint;
+        /// <summary>
+        /// Obiekt reprezentujący aktywne połączenie z sterownikiem
+        /// </summary>
         public ServerConnection Connection { get; private set; }
         
         public DeviceObject(String id, String serverInterface)
@@ -114,6 +170,9 @@ namespace GraphControl
             Task.Run(() => ConnectServer());
         }
 
+        /// <summary>
+        /// Podłącza obiekt do zdalnego sterownika
+        /// </summary>
         private void ConnectServer()
         {
             RemoteDevice remote = new RemoteDevice(this);
@@ -133,6 +192,9 @@ namespace GraphControl
             }
         }
 
+        /// <summary>
+        /// Rozłącza obiekt z zdalnym sterownikiem
+        /// </summary>
         public void DisconnectServer()
         {
             Console.WriteLine("Disconnected from server");
@@ -141,11 +203,17 @@ namespace GraphControl
             Program.Screen.Invalidate();
         }
 
+        /// <summary>
+        /// Podłącza obiekt do zdalnego sterownika. Funkcja używana do obsługi zdarzeń
+        /// </summary>
         private void ConnectServer(object sender, EventArgs args)
         {
             ConnectServer();
         }
 
+        /// <summary>
+        /// Tworzy początkowe menu kontekstowe z jedną opcją: podłączającą do serwera
+        /// </summary>
         private void MakeMenu()
         {
             MenuItem item = new MenuItem("Connect to server");
@@ -156,12 +224,19 @@ namespace GraphControl
             };
         }
 
+        /// <summary>
+        /// Dodaje krawędź wychodzącą z obiektu
+        /// </summary>
+        /// <param name="edge"></param>
         public void AddEdge(EdgeObject edge)
         {
             Edges.Add(edge);
         }
     }
 
+    /// <summary>
+    /// Reprezentuje krawędź, na którą składają się łączone obiekty i kreski na ekranie
+    /// </summary>
     public class EdgeObject
     {
         public DeviceObject PointA { get; private set; }
@@ -175,12 +250,19 @@ namespace GraphControl
             Lines = new List<GraphLine>();
         }
 
+        /// <summary>
+        /// Dodaje kreskę składającą się na krawędź
+        /// </summary>
+        /// <param name="line"></param>
         public void AddLine(GraphLine line)
         {
             Lines.Add(line);
         }
     }
 
+    /// <summary>
+    /// Reprezentuje jedną kreskę na ekranie
+    /// </summary>
     public class GraphLine
     {
         public Point Begin { get; private set; }

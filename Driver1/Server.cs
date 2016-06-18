@@ -8,14 +8,18 @@ using System.IO;
 
 namespace Driver1
 {
+    /// <summary>
+    /// Klasa bazowa emulująca urządzenie, w którym można zmieniać temperaturę
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class BaseServer : Interface.IDriver
     {
+        // Worek z klientami
         protected ConcurrentDictionary<Interface.IDevice, int> devices = new ConcurrentDictionary<Interface.IDevice, int>();
-        // State of the server
+        // Zmienne trzymające stan serwera
         protected Bitmap image;
         protected int serverTemperature;
-        // Available operations
+        // Napisy z dostępnymi operacjami
         private string operation1 = "Zmniejsz chłodzenie";
         private string operation2 = "Zwiększ chłodzenie";
 
@@ -25,6 +29,9 @@ namespace Driver1
             serverTemperature = 50;
         }
 
+        /// <summary>
+        /// Podłączenie się do sterownika i wpisanie na jego listę subskrynentów
+        /// </summary>
         public void Authenticate()
         {
             OperationContext.Current.Channel.Faulted += (sender, args) =>
@@ -45,6 +52,10 @@ namespace Driver1
             BroadcastState();
         }
 
+        /// <summary>
+        /// Nadrukowuje na obrazek serwera napis z temperaturą
+        /// </summary>
+        /// <returns> Gotowy obraz </returns>
         protected Bitmap PrepareImage()
         {
             Bitmap img = new Bitmap(image);
@@ -60,6 +71,9 @@ namespace Driver1
             return img;
         }
 
+        /// <summary>
+        /// Rozgłasza stan urządzenia wszystkim podłączonym subskrynentom
+        /// </summary>
         protected void BroadcastState()
         {
             Bitmap stateImage = PrepareImage();
@@ -68,14 +82,14 @@ namespace Driver1
             foreach (var device in users) {
                 try
                 {
-                    // Set image with state
+                    // Ustawia obrazek z stanem
                     using (MemoryStream ms = new MemoryStream())
                     {
                         stateImage.Save(ms, ImageFormat.Png);
                         device.Key.SetImage(ms.ToArray());
                     }
 
-                    // Set context menu with available operations
+                    // Ustawia menu kontekstowe z dostępnymi operacjami
                     device.Key.SetMenuItems(new string[] {operation1, operation2});
                 }
                 catch (CommunicationException e) 
@@ -85,6 +99,10 @@ namespace Driver1
             }
         }
 
+        /// <summary>
+        /// Wydaje sterownikowi rozkaz wykonania jakiejś akcji
+        /// </summary>
+        /// <param name="action"> Napis, który pojawił się na menu kontekstowym </param>
         public void Execute(string action)
         {
             if (action == null)
@@ -99,6 +117,9 @@ namespace Driver1
             BroadcastState();
         }
 
+        /// <summary>
+        /// Rozłącza klienta z sterownikiem
+        /// </summary>
         public void Disconnect()
         {
             Console.WriteLine("{0} - Client called 'Disconnect', {1} users active", 
@@ -106,16 +127,25 @@ namespace Driver1
         }
     }
 
+    /// <summary>
+    /// Klasa reprezentująca pierwszy serwer
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class Server1 : BaseServer
     {
     }
 
+    /// <summary>
+    /// Klasa reprezentująca drugi serwer
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class Server2 : BaseServer
     {
     }
 
+    /// <summary>
+    /// Klasa reprezentująca switch, wyświetla tylko jego obrazek
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class SwitchServer : Interface.IDriver
     {
@@ -127,6 +157,9 @@ namespace Driver1
             image = new Bitmap(@"data/switch.png");
         }
 
+        /// <summary>
+        /// Podłączenie się do sterownika i wpisanie na jego listę subskrynentów
+        /// </summary>
         public void Authenticate()
         {
             OperationContext.Current.Channel.Faulted += (sender, args) =>
@@ -147,6 +180,10 @@ namespace Driver1
             BroadcastState();
         }
 
+        /// <summary>
+        /// Rozgłasza stan urządzenia wszystkim podłączonym subskrynentom - ustawia 
+        /// obrazek i ukrywa menu kontekstowe
+        /// </summary>
         protected void BroadcastState()
         {
             var users = devices.ToArray();
@@ -170,11 +207,18 @@ namespace Driver1
             }
         }
 
+        /// <summary>
+        /// Wydaje sterownikowi rozkaz wykonania pewnej akcji (w tym przypadku nic nie robi)
+        /// </summary>
+        /// <param name="action"> Napis, który pojawił się na menu kontekstowym </param>
         public void Execute(string action)
         {
             BroadcastState();
         }
 
+        /// <summary>
+        /// Rozłącza z sterownikiem
+        /// </summary>
         public void Disconnect()
         {
             Console.WriteLine("{0} - Client called 'Disconnect', {1} users active",

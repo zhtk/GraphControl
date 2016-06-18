@@ -8,6 +8,9 @@ using System.Drawing.Imaging;
 
 namespace Driver2
 {
+    /// <summary>
+    /// Serwer aplikacji
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class Server : Interface.IDriver
     {
@@ -19,6 +22,9 @@ namespace Driver2
             image = new Bitmap(@"data/server.png");
         }
 
+        /// <summary>
+        /// Podłączenie się do sterownika i wpisanie na jego listę subskrynentów
+        /// </summary>
         public void Authenticate()
         {
             OperationContext.Current.Channel.Faulted += (sender, args) =>
@@ -39,6 +45,9 @@ namespace Driver2
             BroadcastState();
         }
 
+        /// <summary>
+        /// Rozgłasza stan urządzenia wszystkim podłączonym subskrynentom
+        /// </summary>
         protected void BroadcastState()
         {
             var users = devices.ToArray();
@@ -62,11 +71,18 @@ namespace Driver2
             }
         }
 
+        /// <summary>
+        /// Wydaje sterownikowi rozkaz wykonania pewnej akcji
+        /// </summary>
+        /// <param name="action"> Napis, który pojawił się na menu kontekstowym </param>
         public void Execute(string action)
         {
             BroadcastState();
         }
 
+        /// <summary>
+        /// Rozłącza z sterownikiem
+        /// </summary>
         public void Disconnect()
         {
             Console.WriteLine("{0} - Client called 'Disconnect', {1} users active",

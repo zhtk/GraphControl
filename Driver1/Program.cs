@@ -5,10 +5,22 @@ namespace Driver1
 {
     class Program
     {
+        /// <summary>
+        /// Obiekt sterownika udającego pierwszy serwer
+        /// </summary>
         static Server1 serviceInstance1 = new Server1();
+        /// <summary>
+        /// Obiekt sterownika udającego drugi serwer
+        /// </summary>
         static Server2 serviceInstance2 = new Server2();
+        /// <summary>
+        /// Obiekt sterownika udającego switch
+        /// </summary>
         static SwitchServer serviceInstance3 = new SwitchServer();
 
+        /// <summary>
+        /// Główna funkcja, tworzy obiekty sterowników i zaczyna nasłuchiwanie
+        /// </summary>
         static void Main()
         {
             Console.WriteLine("Driver1 Server");

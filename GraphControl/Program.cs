@@ -8,6 +8,9 @@ namespace GraphControl
 {
     static class Program
     {
+        /// <summary>
+        /// Obiekt reprezentujący okno wyświetlane na ekranie
+        /// </summary>
         public static MainScreen Screen {get; private set; }
 
         /// <summary>

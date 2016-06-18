@@ -8,12 +8,21 @@ using System.Drawing;
 
 namespace GraphControl
 {
-    public class ConfigLoader : IDisposable
+    /// <summary>
+    /// Ładuje konfigurację z podanego pliku, domyślnie operator.xml
+    /// </summary>
+    public class ConfigLoader
     {
         private XDocument document;
         private Dictionary<String, DeviceObject> objects = new Dictionary<String, DeviceObject>();
         private List<GraphLine> lines = new List<GraphLine>();
+        /// <summary>
+        /// Podaje szerokość okna z panelem operatorskim
+        /// </summary>
         public int ScreenWidth { get; private set; }
+        /// <summary>
+        /// Podaje wysokość okna z panelem operatorskim
+        /// </summary>
         public int ScreenHeight { get; private set; }
         
         public ConfigLoader(String file = "Operator.xml")
@@ -25,7 +34,8 @@ namespace GraphControl
         }
 
         /// <summary>
-        /// Gets array of device objects
+        /// Daje tablicę z obiektami, które reprezentują urządzenia na ekranie
+        /// operatorskim
         /// </summary>
         public DeviceObject[] DeviceObjects
         {
@@ -36,7 +46,7 @@ namespace GraphControl
         }
 
         /// <summary>
-        /// Gets lines that make edges
+        /// Daje linie tworzące krawędzie na ekranie
         /// </summary>
         public List<GraphLine> EdgeLines
         {
@@ -47,7 +57,7 @@ namespace GraphControl
         }
 
         /// <summary>
-        /// Loads screen settings from XML
+        /// Wczytuje ustawienia ekranu z XMLa
         /// </summary>
         private void LoadScreenSettings()
         {
@@ -61,7 +71,7 @@ namespace GraphControl
         }
 
         /// <summary>
-        /// Loads device objects from XML
+        /// Ładuje i tworzy obiekty urządzeń
         /// </summary>
         private void CreateObjects()
         {
@@ -81,6 +91,12 @@ namespace GraphControl
             }
         }
 
+        /// <summary>
+        /// Wczytuje jedną, podaną krawędź, tworzy linki pomiędzy obiektami urządzeń
+        /// i wczytuje linie składające się na krawędź
+        /// </summary>
+        /// <param name="edge"> Referencja do tej części konfiguracji, z której
+        /// ma zostać wczytana krawędź </param>
         private void ParseEdge(XElement edge)
         {
             
@@ -106,16 +122,15 @@ namespace GraphControl
             pointB.AddEdge(edgeObject);
         }
 
+        /// <summary>
+        /// Wczytuje krawędzie i łączy obiekty urządzeń
+        /// </summary>
         private void LinkObjects()
         {
             var edges = document.Element("operator").Element("edges").Elements();
 
             foreach (var edge in edges)
                 ParseEdge(edge);
-        }
-
-        public void Dispose()
-        { 
         }
     }
 }
