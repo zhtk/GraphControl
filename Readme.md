@@ -1,0 +1,1 @@
+Prototyp aplikacji do zdalnego zarz¹dzania infrastruktur¹. Wiêcej informacji w: koncepcja.pdf
