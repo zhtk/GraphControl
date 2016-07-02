@@ -1,1 +1,1 @@
-Prototyp aplikacji do zdalnego zarz¹dzania infrastruktur¹. Wiêcej informacji w: koncepcja.pdf
+Prototyp aplikacji do zdalnego zarzÄ…dzania infrastrukturÄ… przy uÅ¼yciu grafÃ³w. WiÄ™cej informacji w: koncepcja.pdf
